@@ -37,6 +37,7 @@
 #include "AuthenticateCommand.h"
 #include "SetConfCommand.h"
 #include "GetConfCommand.h"
+#include "AddOnionCommand.h"
 #include "utils/StringUtil.h"
 #include "utils/Settings.h"
 #include "utils/PendingOperation.h"
@@ -46,6 +47,7 @@
 #include <QQmlEngine>
 #include <QTimer>
 #include <QSaveFile>
+#include <QRegularExpression>
 #include <QDebug>
 
 Tor::TorControl *torControl = 0;
@@ -72,6 +74,7 @@ public:
     TorControl::Status status;
     TorControl::TorStatus torStatus;
     QVariantMap bootstrapStatus;
+    bool hasOwnership;
 
     TorControlPrivate(TorControl *parent);
 
@@ -104,7 +107,8 @@ TorControl::TorControl(QObject *parent)
 
 TorControlPrivate::TorControlPrivate(TorControl *parent)
     : QObject(parent), q(parent), controlPort(0), socksPort(0),
-      status(TorControl::NotConnected), torStatus(TorControl::TorUnknown)
+      status(TorControl::NotConnected), torStatus(TorControl::TorUnknown),
+      hasOwnership(false)
 {
     socket = new TorControlSocket(this);
     QObject::connect(socket, SIGNAL(connected()), this, SLOT(socketConnected()));
@@ -272,7 +276,8 @@ void TorControlPrivate::authenticateReply()
 
     // XXX Fix old configurations that would store unwanted options in torrc.
     // This can be removed some suitable amount of time after 1.0.4.
-    q->saveConfiguration();
+    if (hasOwnership)
+        q->saveConfiguration();
 }
 
 void TorControlPrivate::socketConnected()
@@ -479,40 +484,71 @@ void TorControlPrivate::publishServices()
         return;
     }
 
-    SetConfCommand *command = new SetConfCommand;
-    QList<QPair<QByteArray,QByteArray> > torConfig;
+    if (q->torVersionAsNewAs(QStringLiteral("0.2.7"))) {
+        foreach (HiddenService *service, services) {
+            if (service->hostname().isEmpty())
+                qDebug() << "torctrl: Creating a new hidden service";
+            else
+                qDebug() << "torctrl: Publishing hidden service" << service->hostname();
+            AddOnionCommand *onionCommand = new AddOnionCommand(service);
+            QObject::connect(onionCommand, &AddOnionCommand::succeeded, service, &HiddenService::servicePublished);
+            socket->sendCommand(onionCommand, onionCommand->build());
+        }
+    } else {
+        qDebug() << "torctrl: Using legacy SETCONF hidden service configuration for tor" << torVersion;
+        SetConfCommand *command = new SetConfCommand;
+        QList<QPair<QByteArray,QByteArray> > torConfig;
 
-    for (QList<HiddenService*>::Iterator it = services.begin(); it != services.end(); ++it)
-    {
-        HiddenService *service = *it;
-        QDir dir(service->dataPath);
-
-        qDebug() << "torctrl: Configuring hidden service at" << service->dataPath;
-
-        torConfig.append(qMakePair(QByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
-
-        const QList<HiddenService::Target> &targets = service->targets();
-        for (QList<HiddenService::Target>::ConstIterator tit = targets.begin(); tit != targets.end(); ++tit)
+        foreach (HiddenService *service, services)
         {
-            QString target = QString::fromLatin1("%1 %2:%3").arg(tit->servicePort)
-                             .arg(tit->targetAddress.toString())
-                             .arg(tit->targetPort);
-            torConfig.append(qMakePair(QByteArray("HiddenServicePort"), target.toLatin1()));
+            if (service->dataPath().isEmpty())
+                continue;
+
+            if (service->privateKey().isLoaded() && !QFile::exists(service->dataPath() + QStringLiteral("/private_key"))) {
+                // This case can happen if tor is downgraded after the profile is created
+                qWarning() << "Cannot publish ephemeral hidden services with this version of tor; skipping";
+                continue;
+            }
+
+            qDebug() << "torctrl: Configuring hidden service at" << service->dataPath();
+
+            QDir dir(service->dataPath());
+            torConfig.append(qMakePair(QByteArray("HiddenServiceDir"), dir.absolutePath().toLocal8Bit()));
+
+            const QList<HiddenService::Target> &targets = service->targets();
+            for (QList<HiddenService::Target>::ConstIterator tit = targets.begin(); tit != targets.end(); ++tit)
+            {
+                QString target = QString::fromLatin1("%1 %2:%3").arg(tit->servicePort)
+                                 .arg(tit->targetAddress.toString())
+                                 .arg(tit->targetPort);
+                torConfig.append(qMakePair(QByteArray("HiddenServicePort"), target.toLatin1()));
+            }
+
+            QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
         }
 
-        QObject::connect(command, &SetConfCommand::setConfSucceeded, service, &HiddenService::servicePublished);
+        if (!torConfig.isEmpty())
+            socket->sendCommand(command, command->build(torConfig));
     }
-
-    socket->sendCommand(command, command->build(torConfig));
 }
 
 void TorControl::shutdown()
 {
+    if (!hasOwnership()) {
+        qWarning() << "torctrl: Ignoring shutdown command for a tor instance I don't own";
+        return;
+    }
+
     d->socket->sendCommand("SIGNAL SHUTDOWN\r\n");
 }
 
 void TorControl::shutdownSync()
 {
+    if (!hasOwnership()) {
+        qWarning() << "torctrl: Ignoring shutdown command for a tor instance I don't own";
+        return;
+    }
+
     shutdown();
     while (d->socket->bytesToWrite())
     {
@@ -670,20 +706,57 @@ private:
 
 PendingOperation *TorControl::saveConfiguration()
 {
+    if (!hasOwnership()) {
+        qWarning() << "torctrl: Ignoring save configuration command for a tor instance I don't own";
+        return 0;
+    }
+
     SaveConfigOperation *operation = new SaveConfigOperation(this);
     QObject::connect(operation, &PendingOperation::finished, operation, &QObject::deleteLater);
     operation->start(d->socket);
+
+    QQmlEngine::setObjectOwnership(operation, QQmlEngine::CppOwnership);
     return operation;
+}
+
+bool TorControl::hasOwnership() const
+{
+    return d->hasOwnership;
 }
 
 void TorControl::takeOwnership()
 {
+    d->hasOwnership = true;
     d->socket->sendCommand("TAKEOWNERSHIP\r\n");
 
     // Reset PID-based polling
     QVariantMap options;
     options[QStringLiteral("__OwningControllerProcess")] = QVariant();
     setConfiguration(options);
+}
+
+bool TorControl::torVersionAsNewAs(const QString &match) const
+{
+    QRegularExpression r(QStringLiteral("[.-]"));
+    QStringList split = torVersion().split(r);
+    QStringList matchSplit = match.split(r);
+
+    for (int i = 0; i < matchSplit.size(); i++) {
+        if (i >= split.size())
+            return false;
+        bool ok1 = false, ok2 = false;
+        int currentVal = split[i].toInt(&ok1);
+        int matchVal = matchSplit[i].toInt(&ok2);
+        if (!ok1 || !ok2)
+            return false;
+        if (currentVal > matchVal)
+            return true;
+        if (currentVal < matchVal)
+            return false;
+    }
+
+    // Versions are equal, up to the length of match
+    return true;
 }
 
 #include "TorControl.moc"

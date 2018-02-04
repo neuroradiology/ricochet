@@ -59,6 +59,7 @@ class TorControl : public QObject
     Q_PROPERTY(QString torVersion READ torVersion NOTIFY connected)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY statusChanged)
     Q_PROPERTY(QVariantMap bootstrapStatus READ bootstrapStatus NOTIFY bootstrapStatusChanged)
+    Q_PROPERTY(bool hasOwnership READ hasOwnership NOTIFY hasOwnershipChanged)
 
 public:
     enum Status
@@ -83,6 +84,7 @@ public:
     Status status() const;
     TorStatus torStatus() const;
     QString torVersion() const;
+    bool torVersionAsNewAs(const QString &version) const;
     QString errorMessage() const;
 
     bool hasConnectivity() const;
@@ -96,6 +98,10 @@ public:
     /* Connection */
     bool isConnected() const { return status() == Connected; }
     void connect(const QHostAddress &address, quint16 port);
+
+    /* Ownership means that tor is managed by this socket, and we
+     * can shut it down, own its configuration, etc. */
+    bool hasOwnership() const;
     void takeOwnership();
 
     /* Hidden Services */
@@ -114,6 +120,7 @@ signals:
     void disconnected();
     void connectivityChanged();
     void bootstrapStatusChanged();
+    void hasOwnershipChanged();
 
 public slots:
     /* Instruct Tor to shutdown */

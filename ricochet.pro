@@ -35,10 +35,10 @@ lessThan(QT_MAJOR_VERSION,5)|lessThan(QT_MINOR_VERSION,1) {
 
 TARGET = ricochet
 TEMPLATE = app
-QT += core gui network quick widgets multimedia
+QT += core gui network quick widgets
 CONFIG += c++11
 
-VERSION = 1.1.2
+VERSION = 1.1.4
 
 # Use CONFIG+=no-hardened to disable compiler hardening options
 !CONFIG(no-hardened) {
@@ -60,6 +60,18 @@ contains(DEFINES, RICOCHET_NO_PORTABLE) {
         scalable_icon.path = /usr/share/icons/hicolor/scalable/apps/
         scalable_icon.files = icons/ricochet.svg
         INSTALLS += target shortcut icon scalable_icon
+        QMAKE_CLEAN += contrib/usr.bin.ricochet
+        contains(DEFINES, APPARMOR) {
+            apparmor_profile.extra = cp -f $${_PRO_FILE_PWD_}/contrib/usr.bin.ricochet-apparmor $${_PRO_FILE_PWD_}/contrib/usr.bin.ricochet
+            apparmor_profile.files = contrib/usr.bin.ricochet
+            QMAKE_CLEAN += contrib/usr.bin.ricochet
+            !isEmpty(APPARMORDIR) {
+                    apparmor_profile.path = $${APPARMORDIR}/
+            } else {
+                    apparmor_profile.path = /etc/apparmor.d/
+            }
+            INSTALLS += apparmor_profile
+        }
 
         exists(tor) {
             message(Adding bundled Tor to installations)
@@ -106,21 +118,26 @@ win32-msvc2008|win32-msvc2010 {
 
 INCLUDEPATH += src
 
+win32|mac {
+    # For mac, this is necessary because homebrew does not link openssl .pc to
+    # /usr/local/lib/pkgconfig (presumably because it used to be a system
+    # package).
+    #
+    # Unfortunately, it is no longer really a system package, and we really
+    # need to know where it is.
+    isEmpty(OPENSSLDIR): error(You must pass OPENSSLDIR=path/to/openssl to qmake on this platform)
+}
+
 unix {
     !isEmpty(OPENSSLDIR) {
         INCLUDEPATH += $${OPENSSLDIR}/include
         LIBS += -L$${OPENSSLDIR}/lib -lcrypto
-    } else:macx:!packagesExist(libcrypto) {
-        # Fall back to the OS-provided 0.9.8 if no other libcrypto is present
-        LIBS += -lcrypto
     } else {
         CONFIG += link_pkgconfig
         PKGCONFIG += libcrypto
     }
 }
 win32 {
-    isEmpty(OPENSSLDIR):error(You must pass OPENSSLDIR=path/to/openssl to qmake on this platform)
-
     INCLUDEPATH += $${OPENSSLDIR}/include
 
     win32-g++ {
@@ -130,8 +147,16 @@ win32 {
     }
 
     # required by openssl
-    LIBS += -lUser32 -lGdi32 -ladvapi32
+    LIBS += -luser32 -lgdi32 -ladvapi32
 }
+
+# Exclude unneeded plugins from static builds
+QTPLUGIN.playlistformats = -
+QTPLUGIN.imageformats = -
+QTPLUGIN.printsupport = -
+QTPLUGIN.mediaservice = -
+# Include Linux input plugins, which are missing by default, to provide complex input support. See issue #60.
+unix:!macx:QTPLUGIN.platforminputcontexts = composeplatforminputcontextplugin ibusplatforminputcontextplugin
 
 DEFINES += QT_NO_CAST_FROM_ASCII QT_NO_CAST_TO_ASCII
 
@@ -144,6 +169,7 @@ SOURCES += src/main.cpp \
     src/tor/ProtocolInfoCommand.cpp \
     src/tor/AuthenticateCommand.cpp \
     src/tor/SetConfCommand.cpp \
+    src/tor/AddOnionCommand.cpp \
     src/utils/StringUtil.cpp \
     src/core/ContactsManager.cpp \
     src/core/ContactUser.cpp \
@@ -173,6 +199,7 @@ HEADERS += src/ui/MainWindow.h \
     src/tor/ProtocolInfoCommand.h \
     src/tor/AuthenticateCommand.h \
     src/tor/SetConfCommand.h \
+    src/tor/AddOnionCommand.h \
     src/utils/StringUtil.h \
     src/core/ContactsManager.h \
     src/core/ContactUser.h \
@@ -232,36 +259,41 @@ lupdate_only {
 
 # Translations
 TRANSLATIONS += \
-    translation/ricochet_en.ts \
-    translation/ricochet_it.ts \
-    translation/ricochet_es.ts \
-    translation/ricochet_da.ts \
-    translation/ricochet_pl.ts \
-    translation/ricochet_pt_BR.ts \
-    translation/ricochet_de.ts \
-    translation/ricochet_bg.ts \
-    translation/ricochet_cs.ts \
-    translation/ricochet_fi.ts \
-    translation/ricochet_fr.ts \
-    translation/ricochet_ru.ts \
-    translation/ricochet_uk.ts \
-    translation/ricochet_tr.ts \
-    translation/ricochet_nl_NL.ts \
-    translation/ricochet_fil_PH.ts \
-    translation/ricochet_sv.ts \
-    translation/ricochet_he.ts \
-    translation/ricochet_sl.ts \
-    translation/ricochet_zh.ts
+    ricochet_en \
+    ricochet_it \
+    ricochet_es \
+    ricochet_da \
+    ricochet_pl \
+    ricochet_pt_BR \
+    ricochet_de \
+    ricochet_bg \
+    ricochet_cs \
+    ricochet_fi \
+    ricochet_fr \
+    ricochet_ru \
+    ricochet_uk \
+    ricochet_tr \
+    ricochet_nl_NL \
+    ricochet_fil_PH \
+    ricochet_sv \
+    ricochet_he \
+    ricochet_sl \
+    ricochet_zh \
+    ricochet_et_EE \
+    ricochet_it_IT \
+    ricochet_nb \
+    ricochet_pt_PT \
+    ricochet_sq \
+    ricochet_zh_HK \
+    ricochet_ja
 
-isEmpty(QMAKE_LRELEASE) {
-    win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
+# Only build translations when creating the primary makefile.
+!build_pass: {
+    contains(QMAKE_HOST.os,Windows):QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease.exe
     else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+    for (translation, TRANSLATIONS) {
+        system($$QMAKE_LRELEASE translation/$${translation}.ts -qm translation/$${translation}.qm)
+    }
 }
-
-updateqm.input = TRANSLATIONS
-updateqm.output = ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.qm
-updateqm.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.qm
-updateqm.CONFIG += no_link target_predeps
-QMAKE_EXTRA_COMPILERS += updateqm
 
 RESOURCES += translation/embedded.qrc

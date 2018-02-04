@@ -28,9 +28,10 @@ Column {
         // null value is reset
         var conf = {
             'Socks4Proxy': null, 'Socks5Proxy': null, 'Socks5ProxyUsername': null,
-            'Socks5ProxyPassword': null, 'HTTPProxy': null, 'HTTPProxyAuthenticator': null,
-            'FirewallPorts': null, 'FascistFirewall': null, 'Bridge': null, 'UseBridges': null,
-            'DisableNetwork': '0'
+            'Socks5ProxyPassword': null, 'HTTPSProxy': null, 'HTTPSProxyAuthenticator': null,
+            'ReachableAddresses': null, 'Bridge': null, 'UseBridges': null, 'DisableNetwork': '0',
+            // These are not set anymore, but are included here to clear old configurations
+            'FascistFirewall': null, 'FirewallPorts': null
         }
 
         if (proxyType === "socks4") {
@@ -41,15 +42,23 @@ Column {
                 conf['Socks5ProxyUsername'] = proxyUsername
             if (proxyPassword.length > 0)
                 conf['Socks5ProxyPassword'] = proxyPassword
-        } else if (proxyType === "http") {
-            conf['HTTPProxy'] = proxyAddress + ":" + proxyPort
+        } else if (proxyType === "https") {
+            conf['HTTPSProxy'] = proxyAddress + ":" + proxyPort
             if (proxyUsername.length > 0 || proxyPassword.length > 0)
-                conf['HTTPProxyAuthenticator'] = proxyUsername + ":" + proxyPassword
+                conf['HTTPSProxyAuthenticator'] = proxyUsername + ":" + proxyPassword
         }
 
         if (allowedPorts.length > 0) {
-            conf['FirewallPorts'] = allowedPorts
-            conf['FascistFirewall'] = "1"
+            // Prepend *: to port-only fields
+            var ports = allowedPorts.split(',')
+            for (var i = 0; i < ports.length; i++) {
+                ports[i] = ports[i].trim()
+                if (ports[i].indexOf(':') < 0 && ports[i].indexOf('.') < 0) {
+                    ports[i] = "*:" + ports[i]
+                }
+            }
+
+            conf['ReachableAddresses'] = ports.join(', ')
         }
 
         if (bridges.length > 0) {
@@ -60,7 +69,8 @@ Column {
         var command = torControl.setConfiguration(conf)
         command.finished.connect(function() {
             if (command.successful) {
-                torControl.saveConfiguration()
+                if (torControl.hasOwnership)
+                    torControl.saveConfiguration()
                 window.openBootstrap()
             } else
                 console.log("SETCONF error:", command.errorMessage)
@@ -91,7 +101,7 @@ Column {
                     { "text": qsTr("None"), "type": "" },
                     { "text": "SOCKS 4", "type": "socks4" },
                     { "text": "SOCKS 5", "type": "socks5" },
-                    { "text": "HTTP", "type": "http" },
+                    { "text": "HTTPS", "type": "https" },
                 ]
                 textRole: "text"
                 property string selectedType: currentIndex >= 0 ? model[currentIndex].type : ""

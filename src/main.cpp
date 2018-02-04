@@ -56,8 +56,16 @@ static void initTranslation();
 
 int main(int argc, char *argv[])
 {
+    /* Disable rwx memory.
+       This will also ensure full PAX/Grsecurity protections. */
+    qputenv("QV4_FORCE_INTERPRETER",  "1");
+    qputenv("QT_ENABLE_REGEXP_JIT",   "0");
+    /* Use QtQuick 2D renderer by default; ignored if not available */
+    if (qEnvironmentVariableIsEmpty("QMLSCENE_DEVICE"))
+        qputenv("QMLSCENE_DEVICE", "softwarecontext");
+
     QApplication a(argc, argv);
-    a.setApplicationVersion(QLatin1String("1.1.2"));
+    a.setApplicationVersion(QLatin1String("1.1.4"));
     a.setOrganizationName(QStringLiteral("Ricochet"));
 
 #if !defined(Q_OS_WIN) && !defined(Q_OS_MAC)
@@ -78,7 +86,11 @@ int main(int argc, char *argv[])
     initTranslation();
 
     /* Initialize OpenSSL's allocator */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
     CRYPTO_malloc_init();
+#else
+    OPENSSL_malloc_init();
+#endif
 
     /* Seed the OpenSSL RNG */
     if (!SecureRNG::seed())
@@ -127,6 +139,13 @@ static QString appBundlePath()
     return path;
 }
 #endif
+
+// Writes default settings to settings object. Does not care about any
+// preexisting values, therefore this is best used on a fresh object.
+static void loadDefaultSettings(SettingsFile *settings)
+{
+    settings->root()->write("ui.combinedChatWindow", true);
+}
 
 static bool initSettings(SettingsFile *settings, QLockFile **lockFile, QString &errorMessage)
 {
@@ -205,6 +224,10 @@ static bool initSettings(SettingsFile *settings, QLockFile **lockFile, QString &
             filePath = dir.filePath(QStringLiteral("ricochet.ini"));
         if (QFile::exists(filePath))
             importLegacySettings(settings, filePath);
+    }
+    // if still empty, load defaults here
+    if (settings->root()->data().isEmpty()) {
+        loadDefaultSettings(settings);
     }
 
     return true;

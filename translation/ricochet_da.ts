@@ -33,7 +33,7 @@
     <message>
         <location filename="../src/ui/qml/ContactActions.qml" line="40"/>
         <source>Open Window</source>
-        <translation>Åben Vindue</translation>
+        <translation>Åbn Vindue</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/ContactActions.qml" line="44"/>
@@ -54,29 +54,29 @@
 <context>
     <name>ContactIDField</name>
     <message>
-        <location filename="../src/ui/qml/ContactIDField.qml" line="40"/>
+        <location filename="../src/ui/qml/ContactIDField.qml" line="41"/>
         <source>&lt;b&gt;%1&lt;/b&gt; is already your contact</source>
         <translation>&lt;b&gt;%1&lt;/b&gt; er allerede på din kontaktliste</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/ContactIDField.qml" line="42"/>
+        <location filename="../src/ui/qml/ContactIDField.qml" line="43"/>
         <source>You can&apos;t add yourself as a contact</source>
         <translation>Du kan ikke tilføje dig selv som kontaktperson</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/ContactIDField.qml" line="44"/>
+        <location filename="../src/ui/qml/ContactIDField.qml" line="45"/>
         <source>Enter an ID starting with &lt;b&gt;ricochet:&lt;/b&gt;</source>
         <translation>Skriv et ID der begynder med &lt;b&gt;ricochet:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/ContactIDField.qml" line="80"/>
+        <location filename="../src/ui/qml/ContactIDField.qml" line="81"/>
         <source>Copied to clipboard</source>
         <translation>Kopieret til clipboardet</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/ContactIDField.qml" line="92"/>
+        <location filename="../src/ui/qml/ContactIDField.qml" line="93"/>
         <source>Copy</source>
-        <translation>Kopier</translation>
+        <translation>Kopiér</translation>
     </message>
 </context>
 <context>
@@ -104,7 +104,7 @@
     <message>
         <location filename="../src/ui/qml/ContactList.qml" line="80"/>
         <source>Outdated</source>
-        <translation>Uddateret</translation>
+        <translation>Forældet</translation>
     </message>
 </context>
 <context>
@@ -132,7 +132,7 @@
     <message>
         <location filename="../src/ui/qml/ContactPreferences.qml" line="127"/>
         <source>Delivered</source>
-        <translation>Modtaget</translation>
+        <translation>Afleveret</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/ContactPreferences.qml" line="128"/>
@@ -158,7 +158,7 @@
     <message>
         <location filename="../src/ui/qml/ContactPreferences.qml" line="140"/>
         <source>Response:</source>
-        <translation>Tilbagesvar:</translation>
+        <translation>Svar:</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/ContactPreferences.qml" line="163"/>
@@ -210,37 +210,45 @@
 <context>
     <name>GeneralPreferences</name>
     <message>
-        <location filename="../src/ui/qml/GeneralPreferences.qml" line="12"/>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="13"/>
         <source>Use a single window for conversations</source>
-        <translation>Brug et samlet vindue til samtaler</translation>
+        <translation>Hold samtaler i ét vindue</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/GeneralPreferences.qml" line="20"/>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="21"/>
         <source>Open links in default browser without prompting</source>
-        <translation>Åben links i browser uden at spørge</translation>
+        <translation>Åbn links i browser uden at spørge</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/GeneralPreferences.qml" line="28"/>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="29"/>
         <source>Play audio notifications</source>
         <translation>Afspil lydnotifikationer</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/GeneralPreferences.qml" line="37"/>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="38"/>
         <source>Volume</source>
         <translation>Lydstyrke</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="53"/>
+        <source>Language</source>
+        <translation type="unfinished">Sprog</translation>
+    </message>
+    <message>
+        <location filename="../src/ui/qml/GeneralPreferences.qml" line="76"/>
+        <source>Restart Ricochet to apply changes</source>
+        <translation type="unfinished">Genstart Ricochet for at anvende nye indstillinger</translation>
     </message>
 </context>
 <context>
     <name>LanguagePreferences</name>
     <message>
-        <location filename="../src/ui/qml/LanguagePreferences.qml" line="22"/>
         <source>Select Language</source>
-        <translation>Vælg sprog</translation>
+        <translation type="vanished">Vælg sprog</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/LanguagePreferences.qml" line="52"/>
         <source>Restart Ricochet to apply changes</source>
-        <translation>Genstart Ricochet for at anvende nye indstillinger</translation>
+        <translation type="vanished">Genstart Ricochet for at anvende nye indstillinger</translation>
     </message>
 </context>
 <context>
@@ -254,7 +262,7 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../src/main.cpp" line="73"/>
+        <location filename="../src/main.cpp" line="81"/>
         <source>Ricochet Error</source>
         <translation>Ricochet Fejl</translation>
     </message>
@@ -311,12 +319,12 @@
     <message>
         <location filename="../src/ui/qml/MessageDelegate.qml" line="140"/>
         <source>Open with Browser</source>
-        <translation>Åben med Browser</translation>
+        <translation>Åbn i browser</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/MessageDelegate.qml" line="154"/>
         <source>Add as Contact</source>
-        <translation>Tilføj som Kontaktperson</translation>
+        <translation>Tilføj som kontaktperson</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/MessageDelegate.qml" line="166"/>
@@ -345,7 +353,7 @@
     <message>
         <location filename="../src/ui/qml/MessageDialogWrapper.qml" line="11"/>
         <source>This contact will no longer be able to message you, and will be notified about the removal. They may choose to send a new connection request.</source>
-        <translation>Denne kontaktperson vil ikke længere være i stand til at sende dig beskeder, og vil blive notificeret om fjernelsen. Kontaktpersonen kan vælge at sende dig en ny anmodning.</translation>
+        <translation>Denne kontaktperson vil ikke længere være i stand til at sende dig beskeder, og vil blive notificeret om fjernelsen. Kontaktpersonen kan vælge at sende dig en ny kontaktanmodning.</translation>
     </message>
 </context>
 <context>
@@ -363,12 +371,12 @@
     <message>
         <location filename="../src/ui/qml/NetworkSetupWizard.qml" line="124"/>
         <source>This computer&apos;s Internet connection is censored, filtered, or proxied. I need to configure network settings.</source>
-        <translation>Denne computers internetadgang er censureret, filtreret eller proxied. Jeg har brug for at konfigurere netværksindstillinger.</translation>
+        <translation>Denne computers internetadgang er censureret, filtreret eller bag en proxy. Jeg har brug for at konfigurere netværksindstillinger.</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/NetworkSetupWizard.qml" line="131"/>
         <source>Configure</source>
-        <translation>Konfigurer</translation>
+        <translation>Konfigurér</translation>
     </message>
 </context>
 <context>
@@ -376,7 +384,7 @@
     <message>
         <location filename="../src/ui/qml/OfflineStateItem.qml" line="107"/>
         <source>Configure</source>
-        <translation>Konfigurer</translation>
+        <translation>Konfigurér</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/OfflineStateItem.qml" line="115"/>
@@ -386,13 +394,13 @@
     <message>
         <location filename="../src/ui/qml/OfflineStateItem.qml" line="143"/>
         <source>Connection failed</source>
-        <translation>Forbindelse mislykkedes</translation>
+        <translation>Forbindelsen mislykkedes</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/OfflineStateItem.qml" line="169"/>
         <source>Connecting…</source>
         <extracomment>\u2026 is ellipsis</extracomment>
-        <translation>Forbinder...</translation>
+        <translation>Forbinder…</translation>
     </message>
 </context>
 <context>
@@ -400,7 +408,7 @@
     <message>
         <location filename="../src/ui/qml/OpenBrowserDialog.qml" line="40"/>
         <source>&lt;b&gt;Warning!&lt;/b&gt; Opening links with your default browser will harm your security and anonymity.&lt;br&gt;&lt;br&gt;You can &lt;a href=&apos;.&apos;&gt;copy to the clipboard&lt;/a&gt; instead.</source>
-        <translation>&lt;b&gt;Advarsel!&lt;/b&gt; Ved at åbne links med din browser vil du forøge din sikkerhed og anonymitet.&lt;br&gt;&lt;br&gt;Du kan &lt;a href=&apos;.&apos;&gt;kopiere adressen til clipboardet&lt;/a&gt; i stedet.</translation>
+        <translation>&lt;b&gt;Advarsel!&lt;/b&gt; Ved at åbne links med din browser kan du forringe din sikkerhed og anonymitet.&lt;br&gt;&lt;br&gt;Du kan &lt;a href=&apos;.&apos;&gt;kopiere adressen til clipboardet&lt;/a&gt; i stedet.</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/OpenBrowserDialog.qml" line="59"/>
@@ -415,12 +423,12 @@
     <message>
         <location filename="../src/ui/qml/OpenBrowserDialog.qml" line="72"/>
         <source>Open Browser</source>
-        <translation>Åben Browser</translation>
+        <translation>Åbn Browser</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/OpenBrowserDialog.qml" line="84"/>
         <source>Cancel</source>
-        <translation>Annuller</translation>
+        <translation>Annullér</translation>
     </message>
 </context>
 <context>
@@ -436,22 +444,21 @@
         <translation>Generelt</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/PreferencesDialog.qml" line="46"/>
         <source>Language</source>
-        <translation>Sprog</translation>
+        <translation type="vanished">Sprog</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/PreferencesDialog.qml" line="51"/>
+        <location filename="../src/ui/qml/PreferencesDialog.qml" line="46"/>
         <source>Contacts</source>
         <translation>Kontaktpersoner</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/PreferencesDialog.qml" line="56"/>
+        <location filename="../src/ui/qml/PreferencesDialog.qml" line="51"/>
         <source>Tor</source>
         <translation>Tor</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/PreferencesDialog.qml" line="61"/>
+        <location filename="../src/ui/qml/PreferencesDialog.qml" line="56"/>
         <source>About</source>
         <translation>Om</translation>
     </message>
@@ -483,7 +490,7 @@
         <location filename="../src/ui/qml/TorBootstrapStatus.qml" line="17"/>
         <source>Connecting to the Tor network…</source>
         <extracomment>\u2026 is ellipsis</extracomment>
-        <translation>Forbinder til Tor-netværket...</translation>
+        <translation>Forbinder til Tor-netværket…</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/TorBootstrapStatus.qml" line="51"/>
@@ -509,84 +516,84 @@
 <context>
     <name>TorConfigurationPage</name>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="72"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="73"/>
         <source>Does this computer need a proxy to access the internet?</source>
         <translation>Skal denne computer forbinde gennem en proxy for at tilgå internettet?</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="84"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="85"/>
         <source>Proxy type:</source>
         <translation>Proxy type:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="89"/>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="91"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="90"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="92"/>
         <source>None</source>
         <translation>Ingen</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="106"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="107"/>
         <source>Address:</source>
         <translation>Adresse:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="115"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="116"/>
         <source>IP address or hostname</source>
         <translation>IP-adresse eller værtsnavn</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="118"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="119"/>
         <source>Port:</source>
         <translation>Port:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="129"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="130"/>
         <source>Username:</source>
         <translation>Brugernavn:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="139"/>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="149"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="140"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="150"/>
         <source>Optional</source>
         <translation>Valgfrit</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="142"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="143"/>
         <source>Password:</source>
         <translation>Adgangskode:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="159"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="160"/>
         <source>Does this computer&apos;s Internet connection go through a firewall that only allows connections to certain ports?</source>
         <translation>Går denne computers internetforbindelse gennem en firewall der kun tillader forbindelser på visse porte?</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="170"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="171"/>
         <source>Allowed ports:</source>
         <translation>Tilladte porte:</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="177"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="178"/>
         <source>Example: 80,443</source>
         <translation>Eksempel: 80,443</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="188"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="189"/>
         <source>If this computer&apos;s Internet connection is censored, you will need to obtain and use bridge relays.</source>
         <translation>Hvis denne computers internetforbindelse er censureret, er du nødt til at finde og benytte bridge relæer.</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="197"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="198"/>
         <source>Enter one or more bridge relays (one per line):</source>
-        <translation>Indtast et eller flere bridge relæer (et per linje):</translation>
+        <translation>Indsæt én eller flere bridgerelæer (én per linje):</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="212"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="213"/>
         <source>Back</source>
         <translation>Tilbage</translation>
     </message>
     <message>
-        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="219"/>
+        <location filename="../src/ui/qml/TorConfigurationPage.qml" line="220"/>
         <source>Connect</source>
         <translation>Forbind</translation>
     </message>
@@ -672,13 +679,13 @@
         <location filename="../src/ui/qml/TorStateWidget.qml" line="22"/>
         <source>Connecting…</source>
         <extracomment>\u2026 is ellipsis</extracomment>
-        <translation>Forbinder...</translation>
+        <translation>Forbinder…</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/TorStateWidget.qml" line="25"/>
         <source>Connecting… (%1%)</source>
         <extracomment>%1 is progress percentage, e.g. 100</extracomment>
-        <translation>Forbinder... (%1)</translation>
+        <translation>Forbinder… (%1)</translation>
     </message>
     <message>
         <location filename="../src/ui/qml/TorStateWidget.qml" line="32"/>
